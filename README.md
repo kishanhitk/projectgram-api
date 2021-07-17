@@ -29,7 +29,7 @@
 ## Installation
 
 ```bash
-$ npm install
+npm install
 ```
 
 ## Running the app
@@ -58,15 +58,13 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
+## Setup Database
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```psql
+create database projectgram;
+create user pgadmin with password 'pgpassword';
+grant all privileges on database projectgram to pgadmin;
+```
 
 ## License
 
