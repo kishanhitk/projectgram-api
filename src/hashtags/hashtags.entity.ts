@@ -1,6 +1,6 @@
 import { PBaseEntity } from 'src/common/base.entity';
 import { Column, Entity } from 'typeorm';
-enum HashTagType {
+export enum HashTagType {
   'language',
   'framework',
   'topic',
@@ -10,6 +10,6 @@ export class HashTag extends PBaseEntity {
   @Column({ type: 'text', unique: true })
   name: string;
 
-  @Column()
+  @Column({ type: 'text', nullable: false })
   type: HashTagType;
 }
