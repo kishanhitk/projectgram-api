@@ -29,16 +29,16 @@ export class Project extends PBaseEntity {
   @ManyToOne(() => User, (user) => user.projects)
   creator: User;
 
-  @Column({ type: 'text', array: true })
-  images: string[];
+  @Column({ type: 'text', array: true, nullable: true })
+  images?: string[];
 
-  @Column()
+  @Column({ nullable: true })
   souceLink: string;
 
-  @Column()
+  @Column({ nullable: true })
   website: string;
 
-  @Column('bigint')
+  @Column({ type: 'bigint', default: 0 })
   upvote_count: number;
 
   @OneToMany(() => Vote, (vote) => vote.project)
@@ -49,5 +49,5 @@ export class Project extends PBaseEntity {
 
   @ManyToMany(() => HashTag)
   @JoinTable()
-  categories: HashTag[];
+  hashtags: HashTag[];
 }
