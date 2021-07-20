@@ -1,6 +1,6 @@
 import { Entity, ManyToOne } from 'typeorm';
 import { PBaseEntity } from 'src/common/base.entity';
-import { User } from 'src/users/users.entity';
+import { User } from 'src/users/entities/users.entity';
 import { Project } from './projects.entity';
 
 @Entity('vote')

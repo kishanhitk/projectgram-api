@@ -1,6 +1,6 @@
 import { PBaseEntity } from 'src/common/base.entity';
 import { Project } from 'src/projects/projects.entity';
-import { User } from 'src/users/users.entity';
+import { User } from 'src/users/entities/users.entity';
 import { Column, Entity, ManyToOne } from 'typeorm';
 
 @Entity('comments')

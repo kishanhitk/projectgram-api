@@ -7,7 +7,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { PBaseEntity } from 'src/common/base.entity';
-import { User } from 'src/users/users.entity';
+import { User } from 'src/users/entities/users.entity';
 import { Vote } from './project_upvotes.entity';
 import { Comment } from 'src/comments/comments.entity';
 import { HashTag } from 'src/hashtags/entities/hashtags.entity';

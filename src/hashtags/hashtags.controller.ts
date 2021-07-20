@@ -1,10 +1,16 @@
 import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
+import { ApiProperty, ApiTags } from '@nestjs/swagger';
 import { DeleteResult } from 'typeorm';
-import { CreateHashTagDto } from './dto/create-hashtag.dto';
-import { DeleteHashTagDto } from './dto/delete-hashtag.dto';
-import { HashTag } from './entities/hashtags.entity';
+import { HashTag, HashTagType } from './entities/hashtags.entity';
 import { HashtagsService } from './hashtags.service';
-
+class CreateHashtagRequestBody {
+  @ApiProperty() name: string;
+  @ApiProperty() type: HashTagType;
+}
+class DeleteHashtagRequestBody {
+  @ApiProperty() name: string;
+}
+@ApiTags('Hashtags')
 @Controller('hashtags')
 export class HashtagsController {
   constructor(private readonly hashtagsService: HashtagsService) {}
@@ -16,7 +22,7 @@ export class HashtagsController {
 
   @Post()
   async createNewHashTags(
-    @Body() createHashTagDto: CreateHashTagDto,
+    @Body() createHashTagDto: CreateHashtagRequestBody,
   ): Promise<HashTag> {
     console.log(createHashTagDto);
     return await this.hashtagsService.createNewHashTag(
@@ -27,7 +33,7 @@ export class HashtagsController {
 
   @Delete()
   async deleteHashTag(
-    @Body() deleteHashTagDto: DeleteHashTagDto,
+    @Body() deleteHashTagDto: DeleteHashtagRequestBody,
   ): Promise<DeleteResult> {
     return await this.hashtagsService.deleteHashTag(deleteHashTagDto.name);
   }

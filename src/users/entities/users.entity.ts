@@ -22,7 +22,9 @@ export class User extends PBaseEntity {
 
   @BeforeInsert()
   async hashPassword() {
+    console.error('UNENCRY password' + this.password);
     this.password = await bcrypt.hash(this.password, 10);
+    console.error('ENCRY password' + this.password);
   }
 
   async comparePassword(attempt: string): Promise<boolean> {
