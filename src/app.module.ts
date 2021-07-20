@@ -8,7 +8,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { CommentsModule } from './comments/comments.module';
 import { HashtagsModule } from './hashtags/hashtags.module';
 import { Project } from './projects/projects.entity';
-import { HashTag } from './hashtags/hashtags.entity';
+import { HashTag } from './hashtags/entities/hashtags.entity';
 import { Vote } from './projects/project_upvotes.entity';
 import { Comment } from './comments/comments.entity';
 @Module({

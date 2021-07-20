@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { HashTag, HashTagType } from './hashtags.entity';
+import { HashTag, HashTagType } from './entities/hashtags.entity';
 import { HashTagRepository } from './hashtags.repository';
 
 @Injectable()

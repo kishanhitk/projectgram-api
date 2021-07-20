@@ -1,7 +1,8 @@
 import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
 import { DeleteResult } from 'typeorm';
-import { CreateHashTagDto, DeleteHashTagDto } from './create-hashtag.dto';
-import { HashTag } from './hashtags.entity';
+import { CreateHashTagDto } from './dto/create-hashtag.dto';
+import { DeleteHashTagDto } from './dto/delete-hashtag.dto';
+import { HashTag } from './entities/hashtags.entity';
 import { HashtagsService } from './hashtags.service';
 
 @Controller('hashtags')

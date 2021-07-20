@@ -10,7 +10,7 @@ import { PBaseEntity } from 'src/common/base.entity';
 import { User } from 'src/users/users.entity';
 import { Vote } from './project_upvotes.entity';
 import { Comment } from 'src/comments/comments.entity';
-import { HashTag } from 'src/hashtags/hashtags.entity';
+import { HashTag } from 'src/hashtags/entities/hashtags.entity';
 
 @Entity('projects')
 export class Project extends PBaseEntity {
