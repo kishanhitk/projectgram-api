@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiProperty, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { DeleteResult } from 'typeorm';
 import { HashTag, HashTagType } from './entities/hashtags.entity';
 import { HashtagsService } from './hashtags.service';
@@ -20,6 +21,7 @@ export class HashtagsController {
     return this.hashtagsService.getAllHashTags();
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   async createNewHashTags(
     @Body() createHashTagDto: CreateHashtagRequestBody,

@@ -23,7 +23,7 @@ export class UsersService {
 
     return await newUser.save();
   }
-  async getUser(username: string): Promise<User> {
+  async getUserByUsername(username: string): Promise<User> {
     return await this.userRepository.findOne({ username: username });
   }
 }

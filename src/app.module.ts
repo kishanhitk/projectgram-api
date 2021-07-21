@@ -12,6 +12,7 @@ import { HashTag } from './hashtags/entities/hashtags.entity';
 import { Vote } from './projects/project_upvotes.entity';
 import { Comment } from './comments/comments.entity';
 import { ExampleModule } from './example/example.module';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -30,6 +31,7 @@ import { ExampleModule } from './example/example.module';
     CommentsModule,
     HashtagsModule,
     ExampleModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
