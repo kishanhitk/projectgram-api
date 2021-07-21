@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { CreateCommentDto } from './dto/create-comment.dto';
 import { CreateProjectDTO } from './dto/create-project.entity';
 import { Project } from './projects.entity';
 import { ProjectsService } from './projects.service';
@@ -19,7 +20,13 @@ export class ProjectsController {
   ): Promise<Project> {
     return await this.projectService.createProject(projectCreateRequestBody);
   }
-
+  @Post('/:slug/comments')
+  async createComment(
+    @Param('slug') slug: string,
+    @Body() comment: CreateCommentDto,
+  ) {
+    return await this.projectService.createComment(comment);
+  }
   @Get('/:slug/comments')
   async getCommentsOfProject(@Param('slug') slug: string): Promise<Project> {
     return await this.projectService.getAllCommentsOfAProject(slug);

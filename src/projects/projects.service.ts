@@ -3,6 +3,7 @@ import slugify from 'slugify';
 import { CommentRepository } from 'src/comments/comments.repository';
 import { Project } from './projects.entity';
 import { ProjectRepository } from './projects.repository';
+import { Comment } from 'src/comments/comments.entity';
 @Injectable()
 export class ProjectsService {
   constructor(
@@ -33,5 +34,9 @@ export class ProjectsService {
     return await this.commentRepository.find({
       where: { project: { slug: projectId } },
     });
+  }
+
+  async createComment(commentDto: Partial<Comment>) {
+    return await this.commentRepository.save(commentDto);
   }
 }
