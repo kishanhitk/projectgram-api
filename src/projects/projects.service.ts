@@ -4,13 +4,14 @@ import { CommentRepository } from 'src/comments/comments.repository';
 import { Project } from './projects.entity';
 import { ProjectRepository } from './projects.repository';
 import { Comment } from 'src/comments/comments.entity';
+import { UsersService } from 'src/users/users.service';
 @Injectable()
 export class ProjectsService {
   constructor(
     private projectRepository: ProjectRepository,
     private commentRepository: CommentRepository,
+    private userServices: UsersService,
   ) {}
-  // constructor(private commentRepository: CommentRepository) {}
   async getAllProjects(): Promise<Project[]> {
     return this.projectRepository.find({
       relations: ['hashtags', 'creator'],
@@ -18,8 +19,10 @@ export class ProjectsService {
     });
   }
 
-  async createProject(project: Partial<Project>) {
+  async createProject(project: Partial<Project>, username: string) {
     project.slug = slugify(project.title, '_');
+    const creator = await this.userServices.getUserByUsername(username);
+    project.creator = creator;
     return await this.projectRepository.save(project);
   }
 
@@ -30,9 +33,9 @@ export class ProjectsService {
     );
   }
 
-  async getAllCommentsOfAProject(projectId: string): Promise<any> {
+  async getAllCommentsOfAProject(projectSlug: string): Promise<any> {
     return await this.commentRepository.find({
-      where: { project: { slug: projectId } },
+      where: { project: { slug: projectSlug } },
     });
   }
 

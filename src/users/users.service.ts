@@ -20,10 +20,11 @@ export class UsersService {
     newUser.lastName = user.lastName;
     newUser.bio = user.bio;
     newUser.avatar = user.avatar;
-
-    return await newUser.save();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...savedUser } = await newUser.save();
+    return savedUser;
   }
-  async getUserByUsername(username: string): Promise<User> {
+  async getUserByUsername(username: string): Promise<User | undefined> {
     return await this.userRepository.findOne({ username: username });
   }
 }

@@ -12,10 +12,11 @@ export class AuthService {
 
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.usersService.getUserByUsername(username);
+
     if (user && (await user.comparePassword(pass))) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...result } = user;
-      return result;
+      const { password, ...rest } = user;
+      return rest;
     }
     return null;
   }
