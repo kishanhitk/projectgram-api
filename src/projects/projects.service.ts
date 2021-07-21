@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import slugify from 'slugify';
+import { CommentRepository } from 'src/comments/comments.repository';
 import { Project } from './projects.entity';
 import { ProjectRepository } from './projects.repository';
 @Injectable()
 export class ProjectsService {
-  constructor(private projectRepository: ProjectRepository) {}
-
+  constructor(
+    private projectRepository: ProjectRepository,
+    private commentRepository: CommentRepository,
+  ) {}
+  // constructor(private commentRepository: CommentRepository) {}
   async getAllProjects(): Promise<Project[]> {
     return this.projectRepository.find({
       relations: ['hashtags', 'creator'],
@@ -23,5 +27,11 @@ export class ProjectsService {
       { slug: slug },
       { relations: ['hashtags', 'creator', 'comments', 'votes'] },
     );
+  }
+
+  async getAllCommentsOfAProject(projectId: string): Promise<any> {
+    return await this.commentRepository.find({
+      where: { project: { slug: projectId } },
+    });
   }
 }

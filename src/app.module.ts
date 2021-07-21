@@ -21,6 +21,7 @@ import { ExampleModule } from './example/example.module';
       username: 'pgadmin',
       password: 'pgpass',
       database: 'projectgram',
+      logging: 'all',
       entities: [User, Project, HashTag, Comment, Vote],
       synchronize: true,
     }),

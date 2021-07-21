@@ -20,6 +20,11 @@ export class ProjectsController {
     return await this.projectService.createProject(projectCreateRequestBody);
   }
 
+  @Get('/:slug/comments')
+  async getCommentsOfProject(@Param('slug') slug: string): Promise<Project> {
+    return await this.projectService.getAllCommentsOfAProject(slug);
+  }
+
   @Get('/:slug')
   async getProjectBySlug(@Param('slug') slug: string): Promise<Project> {
     return await this.projectService.getProjectBySlug(slug);
