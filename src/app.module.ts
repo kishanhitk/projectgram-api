@@ -13,8 +13,13 @@ import { Vote } from './projects/project_upvotes.entity';
 import { Comment } from './comments/comments.entity';
 import { ExampleModule } from './example/example.module';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath: ['.env', '.env.local', '.env.dev'],
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
