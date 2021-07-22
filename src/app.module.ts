@@ -17,16 +17,17 @@ import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.env', '.env.local', '.env.dev'],
+      envFilePath: ['.env.prod', '.env', '.env.local', '.env.dev'],
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
+      ssl: { rejectUnauthorized: false },
       type: 'postgres',
-      // host: process.env.DBHOST,
-      // port: Number(process.env.DBPORT),
-      // username: process.env.DBUSER,
-      // password: process.env.DBPASS,
-      // database: process.env.DBNAME,
+      host: process.env.DBHOST,
+      port: Number(process.env.DBPORT),
+      username: process.env.DBUSER,
+      password: process.env.DBPASS,
+      database: process.env.DBNAME,
       logging: 'all',
       url: process.env.DATABASE_URL,
       entities: [User, Project, HashTag, Comment, Vote],
