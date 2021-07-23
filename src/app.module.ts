@@ -21,7 +21,6 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      ssl: { rejectUnauthorized: false },
       type: 'postgres',
       host: process.env.DBHOST,
       port: Number(process.env.DBPORT),
