@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -44,6 +45,15 @@ export class ProjectsController {
     @Req() req: any,
   ): Promise<Vote | any> {
     return await this.projectService.upvoteProject(slug, req.user.username);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('/:slug/upvote')
+  async deleteVote(
+    @Param('slug') slug: string,
+    @Req() req: any,
+  ): Promise<Vote | any> {
+    return await this.projectService.deleteVote(slug, req.user.username);
   }
 
   @Post('/:slug/comments')
