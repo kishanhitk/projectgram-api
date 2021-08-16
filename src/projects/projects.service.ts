@@ -19,11 +19,26 @@ export class ProjectsService {
     private userServices: UsersService,
     private voteRepository: VoteRepository,
   ) {}
-  async getAllProjects(): Promise<Project[]> {
-    return this.projectRepository.find({
-      relations: ['hashtags', 'creator'],
-      order: { createdAt: 'DESC' },
-    });
+  async getAllProjects(sortBy: string): Promise<Project[]> {
+    switch (sortBy) {
+      case 'new':
+        return await this.projectRepository.find({
+          order: { createdAt: 'DESC' },
+        });
+      case 'popular':
+        return await this.projectRepository.find({
+          order: { upvote_count: 'DESC' },
+        });
+      case 'trending':
+        //TODO: #2 Implement trending projects
+        return await this.projectRepository.find({
+          order: { upvote_count: 'DESC' },
+        });
+      default:
+        return await this.projectRepository.find({
+          order: { createdAt: 'DESC' },
+        });
+    }
   }
 
   async createProject(project: Partial<Project>, username: string) {
@@ -88,10 +103,10 @@ export class ProjectsService {
       );
     }
     const upVote = new Vote();
-    project.upvote_count++;
     upVote.user = user;
     upVote.project = project;
     const savedVote = await this.voteRepository.save(upVote);
+    project.upvote_count++;
     project.save();
     return savedVote;
   }

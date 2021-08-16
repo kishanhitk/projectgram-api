@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -21,9 +22,10 @@ import { Vote } from './project_upvotes.entity';
 @Controller('projects')
 export class ProjectsController {
   constructor(private projectService: ProjectsService) {}
+
   @Get()
-  async findAll(): Promise<Project[]> {
-    return await this.projectService.getAllProjects();
+  async getAllProjects(@Query('sortBy') sortBy: string): Promise<Project[]> {
+    return await this.projectService.getAllProjects(sortBy);
   }
 
   @UseGuards(JwtAuthGuard)
