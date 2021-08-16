@@ -29,14 +29,17 @@ export class Project extends PBaseEntity {
   @ManyToOne(() => User, (user) => user.projects)
   creator: User;
 
+  @Column({ nullable: true })
+  bannerImage: string;
+
   @Column({ type: 'text', array: true, nullable: true })
-  images?: string[];
+  screenshots?: string[];
 
   @Column({ nullable: true })
-  souceLink: string;
+  souceLink?: string;
 
   @Column({ nullable: true })
-  website: string;
+  website?: string;
 
   @Column({ type: 'bigint', default: 0 })
   upvote_count: number;
