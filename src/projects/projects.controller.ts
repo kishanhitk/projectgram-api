@@ -56,12 +56,18 @@ export class ProjectsController {
     return await this.projectService.deleteVote(slug, req.user.username);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('/:slug/comments')
   async createComment(
     @Param('slug') slug: string,
     @Body() comment: CreateCommentDto,
+    @Req() req: any,
   ) {
-    return await this.projectService.createComment(comment);
+    return await this.projectService.createComment(
+      comment,
+      slug,
+      req.user.username,
+    );
   }
 
   @Get('/:slug/comments')

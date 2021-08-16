@@ -41,13 +41,33 @@ export class ProjectsService {
   }
 
   async getAllCommentsOfAProject(projectSlug: string): Promise<any> {
+    const project = await this.projectRepository.findOne({
+      slug: projectSlug,
+    });
     return await this.commentRepository.find({
-      where: { project: { slug: projectSlug } },
+      where: { project: project },
     });
   }
 
-  async createComment(commentDto: Partial<Comment>) {
-    return await this.commentRepository.save(commentDto);
+  async createComment(
+    commentDto: Partial<Comment>,
+    slug: string,
+    username: string,
+  ) {
+    const user = await this.userServices.getUserByUsername(username);
+    const project = await this.projectRepository.findOne({
+      slug: slug,
+    });
+    //Check if project exists
+    if (!project) {
+      throw new BadRequestException('Project does not exist');
+    }
+    const comment = new Comment();
+
+    comment.commenter = user;
+    comment.project = project;
+    comment.body = commentDto.body;
+    return await comment.save();
   }
 
   async upvoteProject(projectSlug: string, username: string) {
