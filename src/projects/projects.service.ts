@@ -11,6 +11,7 @@ import { Comment } from 'src/comments/comments.entity';
 import { UsersService } from 'src/users/users.service';
 import { Vote } from './project_upvotes.entity';
 import { VoteRepository } from './upvotes.repository';
+import { ILike } from 'typeorm';
 @Injectable()
 export class ProjectsService {
   constructor(
@@ -39,6 +40,23 @@ export class ProjectsService {
           order: { createdAt: 'DESC' },
         });
     }
+  }
+
+  async fullTextSearchByQuery(searchTerm: string): Promise<Project[]> {
+    return await this.projectRepository.find({
+      where: [
+        {
+          title: ILike(`%${searchTerm}%`),
+        },
+        {
+          shortDescription: ILike(`%${searchTerm}%`),
+        },
+        {
+          longDescription: ILike(`%${searchTerm}%`),
+        },
+      ],
+      order: { upvote_count: 'DESC' },
+    });
   }
 
   async createProject(project: Partial<Project>, username: string) {

@@ -28,6 +28,11 @@ export class ProjectsController {
     return await this.projectService.getAllProjects(sortBy);
   }
 
+  @Get('/search')
+  async search(@Query('q') q: string): Promise<Project[]> {
+    return await this.projectService.fullTextSearchByQuery(q);
+  }
+
   @UseGuards(JwtAuthGuard)
   @Post()
   async createNewProject(
