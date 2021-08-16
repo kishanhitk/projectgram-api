@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { User } from './entities/users.entity';
 import { UserRepository } from './users.repository';
 
@@ -11,6 +15,19 @@ export class UsersService {
   }
 
   async createUser(user: Partial<User>) {
+    if (user.username.length < 5)
+      throw new BadRequestException('Username must be of minimum 5 characters');
+
+    if (user.password.length < 8)
+      throw new BadRequestException('Password must be of minimum 8 characters');
+    // Check if user already exists
+    const existingUser = await this.userRepository.findOne({
+      username: user.username,
+    });
+    if (existingUser) {
+      throw new ConflictException('This username is already taken');
+    }
+
     const newUser = new User();
 
     newUser.username = user.username;
