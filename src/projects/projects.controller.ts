@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -13,6 +14,7 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { CreateProjectDTO } from './dto/create-project.entity';
 import { Project } from './projects.entity';
 import { ProjectsService } from './projects.service';
+import { Vote } from './project_upvotes.entity';
 
 @ApiTags('Project')
 @Controller('projects')
@@ -33,6 +35,15 @@ export class ProjectsController {
       projectCreateRequestBody,
       req.user.username,
     );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('/:slug/upvote')
+  async upvoteProject(
+    @Param('slug') slug: string,
+    @Req() req: any,
+  ): Promise<Vote | any> {
+    return await this.projectService.upvoteProject(slug, req.user.username);
   }
 
   @Post('/:slug/comments')
