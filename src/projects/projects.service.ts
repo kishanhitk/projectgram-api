@@ -128,9 +128,7 @@ export class ProjectsService {
       where: { user: user, project: project },
     });
     if (upvote) {
-      return new ConflictException(
-        'This user has already upvoted this project',
-      );
+      throw new ConflictException('You have already upvoted this project');
     }
     const upVote = new Vote();
     upVote.user = user;
