@@ -114,7 +114,20 @@ export class ProjectsService {
     comment.body = commentDto.body;
     return await comment.save();
   }
-
+  async getUpvoteFromSlugAndUser(projectSlug: string, username: string) {
+    const user = await this.userServices.getUserByUsername(username);
+    const project = await this.projectRepository.findOne({
+      slug: projectSlug,
+    });
+    //Check if project exists
+    if (!project) {
+      throw new BadRequestException('Project does not exist');
+    }
+    const vote = await this.voteRepository.findOne({
+      where: { user: user, project: project },
+    });
+    return vote;
+  }
   async upvoteProject(projectSlug: string, username: string) {
     const user = await this.userServices.getUserByUsername(username);
     const project = await this.projectRepository.findOne({ slug: projectSlug });

@@ -46,6 +46,18 @@ export class ProjectsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('/:slug/upvote')
+  async getUpvoteDetailsOfaUserOnaProject(
+    @Param('slug') slug: string,
+    @Req() req: any,
+  ): Promise<Vote | any> {
+    return await this.projectService.getUpvoteFromSlugAndUser(
+      slug,
+      req.user.username,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Put('/:slug/upvote')
   async upvoteProject(
     @Param('slug') slug: string,
