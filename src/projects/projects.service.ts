@@ -11,7 +11,7 @@ import { Comment } from 'src/comments/comments.entity';
 import { UsersService } from 'src/users/users.service';
 import { Vote } from './project_upvotes.entity';
 import { VoteRepository } from './upvotes.repository';
-import { ILike } from 'typeorm';
+import { ILike, In, MoreThan } from 'typeorm';
 @Injectable()
 export class ProjectsService {
   constructor(
@@ -31,8 +31,20 @@ export class ProjectsService {
           order: { upvote_count: 'DESC' },
         });
       case 'trending':
-        //TODO: #2 Implement trending projects
+        //Find votes of last 7 days
+        const recentVotes = await this.voteRepository.find({
+          relations: ['project'],
+          where: {
+            createdAt: MoreThan(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)),
+          },
+        });
+        //Find projects that have been voted on
+        const votedOnProjects = recentVotes.map((vote) => vote.project.id);
+
         return await this.projectRepository.find({
+          where: {
+            id: In(votedOnProjects),
+          },
           order: { upvote_count: 'DESC' },
         });
       default:
