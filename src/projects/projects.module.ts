@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommentRepository } from 'src/comments/comments.repository';
 import { UsersModule } from 'src/users/users.module';
@@ -14,9 +14,10 @@ import { VoteRepository } from './upvotes.repository';
       CommentRepository,
       VoteRepository,
     ]),
-    UsersModule,
+    forwardRef(() => UsersModule),
   ],
   controllers: [ProjectsController],
   providers: [ProjectsService],
+  exports: [ProjectsService],
 })
 export class ProjectsModule {}

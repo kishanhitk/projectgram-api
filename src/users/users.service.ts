@@ -1,14 +1,22 @@
 import {
   BadRequestException,
   ConflictException,
+  forwardRef,
+  Inject,
   Injectable,
 } from '@nestjs/common';
+import { Project } from 'src/projects/projects.entity';
+import { ProjectsService } from 'src/projects/projects.service';
 import { User } from './entities/users.entity';
 import { UserRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private userRepository: UserRepository,
+    @Inject(forwardRef(() => ProjectsService))
+    private projectServices: ProjectsService,
+  ) {}
 
   async getAllUser(): Promise<User[]> {
     return await this.userRepository.find();
@@ -50,5 +58,8 @@ export class UsersService {
   }
   async getUserByUsername(username: string): Promise<User | undefined> {
     return await this.userRepository.findOne({ username: username });
+  }
+  async getAllProjectsByUsername(username: string): Promise<Project[]> {
+    return await this.projectServices.getAllProjectsOfAUser(username);
   }
 }

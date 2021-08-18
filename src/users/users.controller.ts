@@ -25,6 +25,11 @@ export class UsersController {
     return await this.userService.createUser(CreateUserRequestBody);
   }
 
+  @Get('/:username/projects')
+  async getAllProjectsByUsername(@Param('username') username: string) {
+    return await this.userService.getAllProjectsByUsername(username);
+  }
+
   @Get('/:username')
   async getUser(@Param('username') username: string) {
     return await this.userService.getUserByUsername(username);

@@ -1,6 +1,8 @@
 import {
   BadRequestException,
   ConflictException,
+  forwardRef,
+  Inject,
   Injectable,
 } from '@nestjs/common';
 import slugify from 'slugify';
@@ -17,6 +19,7 @@ export class ProjectsService {
   constructor(
     private projectRepository: ProjectRepository,
     private commentRepository: CommentRepository,
+    @Inject(forwardRef(() => UsersService))
     private userServices: UsersService,
     private voteRepository: VoteRepository,
   ) {}
@@ -172,5 +175,13 @@ export class ProjectsService {
     project.upvote_count--;
     project.save();
     return project;
+  }
+  async getAllProjectsOfAUser(username: string): Promise<Project[]> {
+    const user = await this.userServices.getUserByUsername(username);
+    return await this.projectRepository.find({
+      where: {
+        creator: user,
+      },
+    });
   }
 }
