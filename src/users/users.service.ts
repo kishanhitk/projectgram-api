@@ -5,6 +5,7 @@ import {
   Inject,
   Injectable,
 } from '@nestjs/common';
+import { FilesService } from 'src/files/files.service';
 import { Project } from 'src/projects/projects.entity';
 import { ProjectsService } from 'src/projects/projects.service';
 import { User } from './entities/users.entity';
@@ -16,6 +17,7 @@ export class UsersService {
     private userRepository: UserRepository,
     @Inject(forwardRef(() => ProjectsService))
     private projectServices: ProjectsService,
+    private filesService: FilesService,
   ) {}
 
   async getAllUser(): Promise<User[]> {
@@ -61,5 +63,20 @@ export class UsersService {
   }
   async getAllProjectsByUsername(username: string): Promise<Project[]> {
     return await this.projectServices.getAllProjectsOfAUser(username);
+  }
+  async addAvatar(username: string, imageBuffer: Buffer, filename: string) {
+    const avatar = await this.filesService.uploadPublicFile(
+      imageBuffer,
+      filename,
+    );
+    const user = await this.getUserByUsername(username);
+    await this.userRepository.update(
+      { username: username },
+      {
+        ...user,
+        avatar,
+      },
+    );
+    return avatar;
   }
 }
