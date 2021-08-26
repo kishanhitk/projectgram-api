@@ -5,7 +5,7 @@ export class CreateProjectDTO {
   @ApiProperty() title: string;
   @ApiProperty() shortDescription: string;
   @ApiPropertyOptional() hashtags: HashTag[];
-  @ApiPropertyOptional() bannerImage?: string;
+  @ApiPropertyOptional() bannerImage?: any;
   @ApiPropertyOptional() longDescription?: string;
   @ApiPropertyOptional() screenshots?: string[];
 }

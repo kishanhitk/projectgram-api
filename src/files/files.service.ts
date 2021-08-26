@@ -17,6 +17,7 @@ export class FilesService {
           Bucket: process.env.AWS_PUBLIC_BUCKET_NAME,
           Body: dataBuffer,
           Key: `${uuid()}-${filename}`,
+          ACL: 'public-read',
         })
         .promise();
       console.log(uploadResult);

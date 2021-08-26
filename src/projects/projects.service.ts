@@ -14,6 +14,7 @@ import { UsersService } from 'src/users/users.service';
 import { Vote } from './project_upvotes.entity';
 import { VoteRepository } from './upvotes.repository';
 import { ILike, In, MoreThan } from 'typeorm';
+import { FilesService } from 'src/files/files.service';
 @Injectable()
 export class ProjectsService {
   constructor(
@@ -22,6 +23,7 @@ export class ProjectsService {
     @Inject(forwardRef(() => UsersService))
     private userServices: UsersService,
     private voteRepository: VoteRepository,
+    private filesService: FilesService,
   ) {}
   async getAllProjects(sortBy: string): Promise<Project[]> {
     switch (sortBy) {
@@ -74,9 +76,21 @@ export class ProjectsService {
     });
   }
 
-  async createProject(project: Partial<Project>, username: string) {
-    project.slug = slugify(project.title, { replacement: '_', lower: true });
+  async createProject(
+    project: Partial<Project>,
+    username: string,
+    bufferBannerImage: Buffer,
+    bannerImageFileName: string,
+  ) {
+    if (bannerImageFileName && bufferBannerImage) {
+      const bannerImage = await this.filesService.uploadPublicFile(
+        bufferBannerImage,
+        bannerImageFileName,
+      );
+      project.bannerImage = bannerImage;
+    }
     const creator = await this.userServices.getUserByUsername(username);
+    project.slug = slugify(project.title, { replacement: '_', lower: true });
     project.creator = creator;
     return await this.projectRepository.save(project);
   }

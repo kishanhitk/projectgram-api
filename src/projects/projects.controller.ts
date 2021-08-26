@@ -8,8 +8,11 @@ import {
   Put,
   Query,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -35,13 +38,18 @@ export class ProjectsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
+  @UseInterceptors(FileInterceptor('bannerImage'))
   async createNewProject(
     @Body() projectCreateRequestBody: CreateProjectDTO,
     @Req() req: any,
+    @UploadedFile() bannerImage: Express.Multer.File,
   ): Promise<Project> {
+    console.log('bannerImage', bannerImage);
     return await this.projectService.createProject(
       projectCreateRequestBody,
       req.user.username,
+      bannerImage?.buffer,
+      bannerImage?.originalname,
     );
   }
 
