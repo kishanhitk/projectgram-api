@@ -76,19 +76,7 @@ export class ProjectsService {
     });
   }
 
-  async createProject(
-    project: Partial<Project>,
-    username: string,
-    bufferBannerImage: Buffer,
-    bannerImageFileName: string,
-  ) {
-    if (bannerImageFileName && bufferBannerImage) {
-      const bannerImage = await this.filesService.uploadPublicFile(
-        bufferBannerImage,
-        bannerImageFileName,
-      );
-      project.bannerImage = bannerImage;
-    }
+  async createProject(project: Partial<Project>, username: string) {
     const creator = await this.userServices.getUserByUsername(username);
     project.slug = slugify(project.title, { replacement: '_', lower: true });
     project.creator = creator;
@@ -197,5 +185,19 @@ export class ProjectsService {
         creator: user,
       },
     });
+  }
+  async uploadBannerImage(
+    imageBuffer: Buffer,
+    filename: string,
+    projectId: string,
+  ) {
+    const bannerImage = await this.filesService.uploadPublicFile(
+      imageBuffer,
+      filename,
+    );
+    const project = await this.projectRepository.findOne(projectId);
+    project.bannerImage = bannerImage;
+    const updatedProject = await this.projectRepository.save(project);
+    return updatedProject;
   }
 }

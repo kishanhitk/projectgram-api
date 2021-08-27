@@ -38,18 +38,27 @@ export class ProjectsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  @UseInterceptors(FileInterceptor('bannerImage'))
   async createNewProject(
     @Body() projectCreateRequestBody: CreateProjectDTO,
     @Req() req: any,
-    @UploadedFile() bannerImage: Express.Multer.File,
   ): Promise<Project> {
-    console.log('bannerImage', bannerImage);
     return await this.projectService.createProject(
       projectCreateRequestBody,
       req.user.username,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/upload/bannerImage')
+  @UseInterceptors(FileInterceptor('bannerImage'))
+  async uploadBannerImage(
+    @Body('projectId') projectId: string,
+    @UploadedFile() bannerImage: Express.Multer.File,
+  ): Promise<Project> {
+    return await this.projectService.uploadBannerImage(
       bannerImage?.buffer,
       bannerImage?.originalname,
+      projectId,
     );
   }
 
