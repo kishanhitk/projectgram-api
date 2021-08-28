@@ -1,6 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommentRepository } from 'src/comments/comments.repository';
+import { FilesModule } from 'src/files/files.module';
 import { UsersModule } from 'src/users/users.module';
 import { ProjectsController } from './projects.controller';
 import { ProjectRepository } from './projects.repository';
@@ -15,6 +16,7 @@ import { VoteRepository } from './upvotes.repository';
       VoteRepository,
     ]),
     forwardRef(() => UsersModule),
+    FilesModule,
   ],
   controllers: [ProjectsController],
   providers: [ProjectsService],

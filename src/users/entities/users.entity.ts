@@ -1,9 +1,17 @@
-import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { PBaseEntity } from 'src/common/base.entity';
 import { Project } from 'src/projects/projects.entity';
 import { Vote } from 'src/projects/project_upvotes.entity';
 import { Comment } from 'src/comments/comments.entity';
+import { PublicFile } from 'src/files/publicfiles.entity';
 @Entity('users')
 export class User extends PBaseEntity {
   @Column({ length: 30, nullable: false, unique: true })
@@ -35,8 +43,14 @@ export class User extends PBaseEntity {
   @Column({ nullable: true, length: 25 })
   lastName?: string;
 
-  @Column({ nullable: true })
-  avatar?: string;
+  @JoinColumn()
+  @OneToOne(() => PublicFile, {
+    eager: true,
+    nullable: true,
+  })
+  avatar?: PublicFile;
+  // @Column({ nullable: true })
+  // avatar?: string;
 
   @Column({ nullable: true, length: 100 })
   bio?: string;

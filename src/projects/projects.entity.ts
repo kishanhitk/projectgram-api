@@ -1,16 +1,19 @@
 import {
   Column,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
 import { PBaseEntity } from 'src/common/base.entity';
 import { User } from 'src/users/entities/users.entity';
 import { Vote } from './project_upvotes.entity';
 import { Comment } from 'src/comments/comments.entity';
 import { HashTag } from 'src/hashtags/entities/hashtags.entity';
+import { PublicFile } from 'src/files/publicfiles.entity';
 
 @Entity('projects')
 export class Project extends PBaseEntity {
@@ -29,8 +32,12 @@ export class Project extends PBaseEntity {
   @ManyToOne(() => User, (user) => user.projects)
   creator: User;
 
-  @Column({ nullable: true })
-  bannerImage: string;
+  @JoinColumn()
+  @OneToOne(() => PublicFile, {
+    eager: true,
+    nullable: true,
+  })
+  bannerImage?: PublicFile;
 
   @Column({ type: 'text', array: true, nullable: true })
   screenshots?: string[];

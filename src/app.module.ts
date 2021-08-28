@@ -14,6 +14,8 @@ import { Comment } from './comments/comments.entity';
 import { ExampleModule } from './example/example.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { FilesModule } from './files/files.module';
+import { PublicFile } from './files/publicfiles.entity';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -33,7 +35,7 @@ import { ConfigModule } from '@nestjs/config';
             database: process.env.DBNAME,
             logging: 'all',
             url: process.env.DATABASE_URL,
-            entities: [User, Project, HashTag, Comment, Vote],
+            entities: [User, Project, HashTag, Comment, Vote, PublicFile],
             synchronize: true,
           }
         : {
@@ -45,7 +47,7 @@ import { ConfigModule } from '@nestjs/config';
             database: process.env.DBNAME,
             logging: 'all',
             url: process.env.DATABASE_URL,
-            entities: [User, Project, HashTag, Comment, Vote],
+            entities: [User, Project, HashTag, Comment, Vote, PublicFile],
             synchronize: true,
           },
     ),
@@ -55,6 +57,7 @@ import { ConfigModule } from '@nestjs/config';
     HashtagsModule,
     ExampleModule,
     AuthModule,
+    FilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
