@@ -97,6 +97,7 @@ export class ProjectsService {
     return await this.commentRepository.find({
       where: { project: project },
       relations: ['commenter'],
+      order: { createdAt: 'DESC' },
     });
   }
 
