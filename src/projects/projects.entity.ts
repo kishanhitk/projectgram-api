@@ -43,7 +43,7 @@ export class Project extends PBaseEntity {
   screenshots?: string[];
 
   @Column({ nullable: true })
-  souceLink?: string;
+  sourceLink?: string;
 
   @Column({ nullable: true })
   website?: string;
