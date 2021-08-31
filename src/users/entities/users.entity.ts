@@ -1,17 +1,9 @@
-import {
-  BeforeInsert,
-  Column,
-  Entity,
-  JoinColumn,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
+import { BeforeInsert, Column, Entity, OneToMany } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { PBaseEntity } from 'src/common/base.entity';
 import { Project } from 'src/projects/projects.entity';
 import { Vote } from 'src/projects/project_upvotes.entity';
 import { Comment } from 'src/comments/comments.entity';
-import { PublicFile } from 'src/files/publicfiles.entity';
 @Entity('users')
 export class User extends PBaseEntity {
   @Column({ length: 30, nullable: false, unique: true })
@@ -24,13 +16,15 @@ export class User extends PBaseEntity {
   github_username?: string;
 
   @Column({
-    nullable: false,
+    nullable: true,
   })
-  password: string;
+  password?: string;
 
   @BeforeInsert()
   async hashPassword() {
-    this.password = await bcrypt.hash(this.password, 10);
+    if (this.password) {
+      this.password = await bcrypt.hash(this.password, 10);
+    }
   }
 
   async comparePassword(attempt: string): Promise<boolean> {
@@ -43,17 +37,14 @@ export class User extends PBaseEntity {
   @Column({ nullable: true, length: 25 })
   lastName?: string;
 
-  @JoinColumn()
-  @OneToOne(() => PublicFile, {
-    eager: true,
-    nullable: true,
-  })
-  avatar?: PublicFile;
-  // @Column({ nullable: true })
-  // avatar?: string;
+  @Column({ nullable: true })
+  avatar?: string;
 
   @Column({ nullable: true, length: 100 })
   bio?: string;
+
+  @Column({ default: false })
+  isRegisteredWithGoogle: boolean;
 
   @OneToMany(() => Project, (project) => project.creator)
   projects: Project[];

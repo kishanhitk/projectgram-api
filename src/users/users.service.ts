@@ -4,6 +4,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { FilesService } from 'src/files/files.service';
 import { Project } from 'src/projects/projects.entity';
@@ -61,6 +62,35 @@ export class UsersService {
   async getUserByUsername(username: string): Promise<User | undefined> {
     return await this.userRepository.findOne({ username: username });
   }
+
+  // Get user by email
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const user = await this.userRepository.findOne({ email: email });
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
+
+  // Create user with google
+  async createWithGoogle(
+    email: string,
+    firstName: string,
+    lastName: string,
+    picture: string,
+    userName: string,
+  ) {
+    const newUser = this.userRepository.create({
+      username: userName,
+      firstName,
+      lastName,
+      email,
+      avatar: picture,
+      bio: 'ProjectGrammer',
+      isRegisteredWithGoogle: true,
+    });
+    await this.userRepository.save(newUser);
+    console.error('User created with google', newUser);
+    return newUser;
+  }
   async getAllProjectsByUsername(username: string): Promise<Project[]> {
     return await this.projectServices.getAllProjectsOfAUser(username);
   }
@@ -74,7 +104,7 @@ export class UsersService {
       { username: username },
       {
         ...user,
-        avatar,
+        avatar: avatar.url,
       },
     );
     return avatar;
