@@ -16,6 +16,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { FilesModule } from './files/files.module';
 import { PublicFile } from './files/publicfiles.entity';
+import { GoogleAuthModule } from './google-auth/google-auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -58,6 +59,7 @@ import { PublicFile } from './files/publicfiles.entity';
     ExampleModule,
     AuthModule,
     FilesModule,
+    GoogleAuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
