@@ -15,6 +15,9 @@ import { Vote } from './project_upvotes.entity';
 import { VoteRepository } from './upvotes.repository';
 import { ILike, In, MoreThan } from 'typeorm';
 import { FilesService } from 'src/files/files.service';
+import { HashtagsService } from 'src/hashtags/hashtags.service';
+import { CreateProjectDTO } from './dto/create-project.entity';
+import { HashTag } from 'src/hashtags/entities/hashtags.entity';
 @Injectable()
 export class ProjectsService {
   constructor(
@@ -24,11 +27,14 @@ export class ProjectsService {
     private userServices: UsersService,
     private voteRepository: VoteRepository,
     private filesService: FilesService,
+    private hashtagsService: HashtagsService,
   ) {}
-  async getAllProjects(sortBy: string): Promise<Project[]> {
+  async getAllProjects(sortBy: string, tag: string): Promise<Project[]> {
+    //TODO Add filter by tag
     switch (sortBy) {
       case 'new':
         return await this.projectRepository.find({
+          relations: ['hashtags'],
           order: { createdAt: 'DESC' },
         });
       case 'popular':
@@ -76,11 +82,24 @@ export class ProjectsService {
     });
   }
 
-  async createProject(project: Partial<Project>, username: string) {
+  async createProject(project: CreateProjectDTO, username: string) {
     const creator = await this.userServices.getUserByUsername(username);
-    project.slug = slugify(project.title, { replacement: '_', lower: true });
-    project.creator = creator;
-    return await this.projectRepository.save(project);
+    let hashtags: HashTag[] = null;
+    console.log(project.hashtags);
+    if (project.tags?.length > 0) {
+      hashtags = await this.hashtagsService.getMutipleHashTagsByID(
+        project.tags,
+      );
+    }
+    const slug = slugify(project.title, { replacement: '_', lower: true });
+    return await this.projectRepository
+      .create({
+        hashtags,
+        creator,
+        slug,
+        ...project,
+      })
+      .save();
   }
 
   async getProjectBySlug(slug: string): Promise<Project> {
@@ -88,6 +107,16 @@ export class ProjectsService {
       { slug: slug },
       { relations: ['hashtags', 'creator', 'comments', 'votes'] },
     );
+  }
+  async getProjectsByTag(tag: string): Promise<Project[]> {
+    return this.projectRepository.find({
+      where: {
+        hashtags: {
+          name: tag,
+        },
+      },
+      relations: ['hashtags', 'creator', 'comments', 'votes'],
+    });
   }
 
   async getAllCommentsOfAProject(projectSlug: string): Promise<any> {
@@ -201,5 +230,9 @@ export class ProjectsService {
     project.bannerImage = bannerImage;
     const updatedProject = await this.projectRepository.save(project);
     return updatedProject;
+  }
+
+  async deleteProjectBySlug(slug: string) {
+    return await this.projectRepository.delete({ slug: slug });
   }
 }

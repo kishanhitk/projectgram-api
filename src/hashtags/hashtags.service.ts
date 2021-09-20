@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { In } from 'typeorm';
 import { HashTag, HashTagType } from './entities/hashtags.entity';
 import { HashTagRepository } from './hashtags.repository';
 
@@ -8,6 +9,13 @@ export class HashtagsService {
 
   async getAllHashTags() {
     return await this.hashtagRepository.find();
+  }
+  async getMutipleHashTagsByID(ids: string[]) {
+    return await this.hashtagRepository.find({
+      where: {
+        id: In(ids),
+      },
+    });
   }
 
   async createNewHashTag(hashTagTitle: string, hashTagType: HashTagType) {
