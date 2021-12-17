@@ -27,8 +27,11 @@ export class ProjectsController {
   constructor(private projectService: ProjectsService) {}
 
   @Get()
-  async getAllProjects(@Query('sortBy') sortBy: string): Promise<Project[]> {
-    return await this.projectService.getAllProjects(sortBy);
+  async getAllProjects(
+    @Query('sortBy') sortBy: string,
+    @Query('tag') tag: string,
+  ): Promise<Project[]> {
+    return await this.projectService.getAllProjects(sortBy, tag);
   }
 
   @Get('/search')
@@ -114,5 +117,10 @@ export class ProjectsController {
   @Get('/:slug')
   async getProjectBySlug(@Param('slug') slug: string): Promise<Project> {
     return await this.projectService.getProjectBySlug(slug);
+  }
+
+  @Delete('/:slug')
+  async deleteProjectBySlug(@Param('slug') slug: string): Promise<any> {
+    return await this.projectService.deleteProjectBySlug(slug);
   }
 }

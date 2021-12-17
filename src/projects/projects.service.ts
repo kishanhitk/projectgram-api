@@ -13,8 +13,11 @@ import { Comment } from 'src/comments/comments.entity';
 import { UsersService } from 'src/users/users.service';
 import { Vote } from './project_upvotes.entity';
 import { VoteRepository } from './upvotes.repository';
-import { ILike, In, MoreThan } from 'typeorm';
+import { ILike, MoreThan } from 'typeorm';
 import { FilesService } from 'src/files/files.service';
+import { HashtagsService } from 'src/hashtags/hashtags.service';
+import { CreateProjectDTO } from './dto/create-project.entity';
+import { HashTag } from 'src/hashtags/entities/hashtags.entity';
 @Injectable()
 export class ProjectsService {
   constructor(
@@ -24,17 +27,20 @@ export class ProjectsService {
     private userServices: UsersService,
     private voteRepository: VoteRepository,
     private filesService: FilesService,
+    private hashtagsService: HashtagsService,
   ) {}
-  async getAllProjects(sortBy: string): Promise<Project[]> {
+  async getAllProjects(sortBy: string, tag: string): Promise<Project[]> {
+    let projectQuery = this.projectRepository.createQueryBuilder('project');
+    if (tag) {
+      projectQuery = projectQuery
+        .leftJoin('project.hashtags', 'hashtags')
+        .where('hashtags.name = :tag', { tag });
+    }
     switch (sortBy) {
       case 'new':
-        return await this.projectRepository.find({
-          order: { createdAt: 'DESC' },
-        });
+        return projectQuery.orderBy('project.createdAt', 'DESC').getMany();
       case 'popular':
-        return await this.projectRepository.find({
-          order: { upvote_count: 'DESC' },
-        });
+        return projectQuery.orderBy('project.upvote_count', 'DESC').getMany();
       case 'trending':
         //Find votes of last 7 days
         const recentVotes = await this.voteRepository.find({
@@ -45,17 +51,14 @@ export class ProjectsService {
         });
         //Find projects that have been voted on
         const votedOnProjects = recentVotes.map((vote) => vote.project.id);
-
-        return await this.projectRepository.find({
-          where: {
-            id: In(votedOnProjects),
-          },
-          order: { upvote_count: 'DESC' },
-        });
+        if (votedOnProjects?.length > 0) {
+          projectQuery = projectQuery.where('project.id IN (:...ids)', {
+            ids: [...votedOnProjects],
+          });
+        }
+        return projectQuery.orderBy('project.upvote_count', 'DESC').getMany();
       default:
-        return await this.projectRepository.find({
-          order: { createdAt: 'DESC' },
-        });
+        return projectQuery.orderBy('project.createdAt', 'DESC').getMany();
     }
   }
 
@@ -76,11 +79,24 @@ export class ProjectsService {
     });
   }
 
-  async createProject(project: Partial<Project>, username: string) {
+  async createProject(project: CreateProjectDTO, username: string) {
     const creator = await this.userServices.getUserByUsername(username);
-    project.slug = slugify(project.title, { replacement: '_', lower: true });
-    project.creator = creator;
-    return await this.projectRepository.save(project);
+    let hashtags: HashTag[] = null;
+    console.log(project.hashtags);
+    if (project.tags?.length > 0) {
+      hashtags = await this.hashtagsService.getMutipleHashTagsByID(
+        project.tags,
+      );
+    }
+    const slug = slugify(project.title, { replacement: '_', lower: true });
+    return await this.projectRepository
+      .create({
+        hashtags,
+        creator,
+        slug,
+        ...project,
+      })
+      .save();
   }
 
   async getProjectBySlug(slug: string): Promise<Project> {
@@ -88,6 +104,16 @@ export class ProjectsService {
       { slug: slug },
       { relations: ['hashtags', 'creator', 'comments', 'votes'] },
     );
+  }
+  async getProjectsByTag(tag: string): Promise<Project[]> {
+    return this.projectRepository.find({
+      where: {
+        hashtags: {
+          name: tag,
+        },
+      },
+      relations: ['hashtags', 'creator', 'comments', 'votes'],
+    });
   }
 
   async getAllCommentsOfAProject(projectSlug: string): Promise<any> {
@@ -201,5 +227,9 @@ export class ProjectsService {
     project.bannerImage = bannerImage;
     const updatedProject = await this.projectRepository.save(project);
     return updatedProject;
+  }
+
+  async deleteProjectBySlug(slug: string) {
+    return await this.projectRepository.delete({ slug: slug });
   }
 }

@@ -16,10 +16,9 @@ class DeleteHashtagRequestBody {
 export class HashtagsController {
   constructor(private readonly hashtagsService: HashtagsService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Get()
   async getAllHashTags(): Promise<HashTag[] | any> {
-    this.hashtagsService.getAllHashTags();
+    return await this.hashtagsService.getAllHashTags();
   }
 
   @UseGuards(JwtAuthGuard)
