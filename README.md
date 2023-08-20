@@ -65,7 +65,8 @@ create database projectgram;
 create user pgadmin with password 'pgpassword';
 grant all privileges on database projectgram to pgadmin;
 ```
-
+## API Docs
+The API Docs are available via Swagger at [https://projectgram-api.onrender.com/docs/](https://projectgram-api.onrender.com/docs/)
 ## License
 
 Nest is [MIT licensed](LICENSE).
